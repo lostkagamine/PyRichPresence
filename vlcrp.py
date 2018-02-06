@@ -67,7 +67,7 @@ async def run():
     print('''
 VLC Media Player - Rich Presence for Discord
 (c) ry00001 2018
-This software is closed-source (for the time being, anyways.)
+This software is open-source
 Starting up...
     ''')
     await rpc.start()
