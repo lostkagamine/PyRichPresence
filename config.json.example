@@ -1,0 +1,9 @@
+{
+    "discord": {
+        "client_id": rich presence client id
+    },
+    "vlc": {
+        "password": "your vlc web interface password",
+        "ip": "127.0.0.1:8080" // this is usually fine, but you'll wanna change this if you're running with a different port or on a remote server
+    }
+}
