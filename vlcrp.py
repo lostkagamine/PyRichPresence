@@ -78,18 +78,17 @@ def parse(thing):
 
 
 async def run():
-    print('''
-VLC Media Player - Rich Presence for Discord
-(c) ry00001 2018
+    print('''VLC Media Player - Rich Presence for Discord
+by ry00001
 This software is open-source
-Starting up...
-    ''')
+Starting up...''')
     await rpc.start()
     while True:
         try:
             data = await get_data()
             if data is None:
                 print('VLC exit detected. Exiting...')
+                rpc.close()
                 break
             data = addict.Dict(xmltodict.parse(data)).root
             if data.state == 'stopped':
@@ -110,6 +109,7 @@ Starting up...
             await asyncio.sleep(1)
         except KeyboardInterrupt:
             print('Shutting down...')
+            rpc.close()
             break
 
 try:
