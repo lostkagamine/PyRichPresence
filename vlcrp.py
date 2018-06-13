@@ -6,8 +6,10 @@ import addict
 import xmltodict
 import datetime
 
-config = addict.Dict(json.load(open('config.json')))
-loop = asyncio.ProactorEventLoop()
+with open('config.json') as f:
+    config = addict.Dict(json.load(f))
+
+loop = asyncio.ProactorEventLoop()  # NOTE: Doesn't work on UNIX
 
 rpc = rp.DiscordRPC(str(config.discord.client_id), loop, False)
 ip = config.vlc.ip
@@ -17,13 +19,12 @@ async def get_data():
         auth = aiohttp.BasicAuth('', config.vlc.password)
         async with aiohttp.ClientSession(auth=auth) as cs:
             async with cs.get(f'http://{ip}/requests/status.xml') as r:
-                text = await r.read()
-                return text.decode('utf-8')
+                text = await r.text()
     except aiohttp.client_exceptions.ClientConnectorError:
         return None
 
-class Track:
-    def __init__(self, filename, artist=None, album=None, title=None, length:int=None, now:int=None, state=None):
+class Track:  # Todo for Py3.7: Turn into dataclass
+    def __init__(self, filename, artist=None, album=None, title=None, length: int = None, now: int = None, state=None):
         self.filename = filename
         self.artist = artist
         self.album = album
@@ -60,7 +61,7 @@ async def send_rp_data(trk, stopped):
 def parse(thing):
     a = ['album', 'filename', 'date', 'artist', 'title']
     b = addict.Dict()
-    if type(thing) == addict.Dict:
+    if isinstance(thing, addict.Dict):
         try:
             awau = a.index(thing['@name'])
             b[a[awau]] = thing['#text']
