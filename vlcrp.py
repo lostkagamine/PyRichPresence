@@ -58,7 +58,7 @@ async def send_rp_data(trk, stopped):
     await rpc.send_rich_presence(payload.to_dict())
 
 def parse(thing):
-    a = ['album', 'filename', 'date', 'artist']
+    a = ['album', 'filename', 'date', 'artist', 'title']
     b = addict.Dict()
     if type(thing) == addict.Dict:
         try:
@@ -97,6 +97,7 @@ Starting up...''')
             thing = parse(data.information.category[0].info)
             if thing is None:
                 continue
+            title = thing.title
             filename = thing.filename
             artist = thing.artist
             date = thing.date
@@ -104,10 +105,10 @@ Starting up...''')
             total = int(data.length)
             now = int(data.time)
             state = data.state
-            track = Track(filename, now=now, length=total, state=state, artist=artist, album=album)
+            track = Track(filename, title=title, now=now, length=total, state=state, artist=artist, album=album)
             await send_rp_data(track, False)
             await asyncio.sleep(1)
-        except KeyboardInterrupt:
+        except RuntimeError:
             print('Shutting down...')
             rpc.close()
             break
